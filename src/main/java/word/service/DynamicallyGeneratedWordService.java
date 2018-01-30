@@ -1,9 +1,11 @@
 package word.service;
 
 
-import java.io.File;  
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;  
-import java.io.IOException;  
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;  
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -23,7 +25,8 @@ import freemarker.template.Configuration;
 import freemarker.template.MalformedTemplateNameException;  
 import freemarker.template.Template;  
 import freemarker.template.TemplateException;  
-import freemarker.template.TemplateNotFoundException;  
+import freemarker.template.TemplateNotFoundException;
+import sun.misc.BASE64Encoder;  
   
 public class DynamicallyGeneratedWordService {  
     private static Configuration freemarkerConfig;  
@@ -55,16 +58,18 @@ public class DynamicallyGeneratedWordService {
     		stuList.add(student);
     	}
         Map<String,Object> result = new HashMap<String,Object>();  
-        result.put("title", "是标题");  
+        result.put("title", "新建的标题");  
         result.put("date", new Date());
         result.put("stuList", stuList);  
-          
+        result.put("image", getImageString("C:\\Users\\Hikaru\\git\\word\\1.jpg"));  
+        
         freemarkerConfig.setTemplateLoader(new URLTemplateLoader() {  
               
             @Override  
             protected URL getURL(String arg0) {  
                 try {
-                	File file=new File("D:\\Eworkspace\\word\\src\\main\\java\\test.xml");
+                	//File file=new File("C:\\Users\\Hikaru\\git\\word\\src\\main\\java\\test.xml");
+                	File file=new File("C:\\Users\\Hikaru\\git\\word\\src\\main\\java\\test1.xml");
                 	return file.toURI().toURL();
 				} catch (MalformedURLException e) {
 					// TODO 自动生成的 catch 块
@@ -85,6 +90,23 @@ public class DynamicallyGeneratedWordService {
     }  
     @Test
     public void test() throws TemplateNotFoundException, MalformedTemplateNameException, ParseException, IOException, TemplateException {
-    	this.genWordFile("D:\\Eworkspace\\word\\src\\main\\java\\word.doc");
+    	this.genWordFile("C:\\Users\\Hikaru\\git\\word\\src\\main\\java\\word_pic.doc");
     }
+    
+    public static String getImageString(String filename) throws IOException {
+		 InputStream in = null;
+        byte[] data = null;
+        try {
+            in = new FileInputStream(filename);
+            data = new byte[in.available()];
+            in.read(data);
+            in.close();
+        } catch (IOException e) {
+            throw e;
+        } finally {
+       	 if(in != null) in.close();
+        }
+        BASE64Encoder encoder = new BASE64Encoder();
+        return data != null ? encoder.encode(data) : "";
+	}
 }  
